@@ -3,14 +3,14 @@ package com.proyectos.authservice.services.impl;
 import com.proyectos.authservice.commons.dto.TokenResponse;
 import com.proyectos.authservice.services.JwtService;
 import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 
 @Service
@@ -19,8 +19,15 @@ public class JwtServiceImpl implements JwtService {
 
     private final SecretKey secretKey ;
 
-    public JwtServiceImpl() {
-        this.secretKey = Jwts.SIG.HS512.key().build();
+    public JwtServiceImpl() throws NoSuchAlgorithmException {
+
+        String originalKey = "jnsdjasdj1238902ejk23";
+
+        MessageDigest digest = MessageDigest.getInstance("SHA-256");
+        byte[] keyBytes = digest.digest(originalKey.getBytes(StandardCharsets.UTF_8));
+
+        this.secretKey = Keys.hmacShaKeyFor(keyBytes);
+
     }
 
     @Override
